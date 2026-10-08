@@ -191,13 +191,13 @@ details.pt{background:#fff;border:1px solid var(--bd);border-radius:14px;padding
 <div id="cwrap"><div style="text-align:center;color:var(--mu);font-size:13px;margin:12px 0">atau</div>
 <button class="bt s" id="ctog" type="button" style="width:100%">🛡️ Masuk sebagai Captain</button>
 <div id="cf" class="hid" style="margin-top:10px"><label>Username</label><input id="lu" autocomplete="username" autocapitalize="off"><label>Kata sandi</label><input id="lp" type="password" autocomplete="current-password"><button class="bt" id="lgo" type="button" style="width:100%">Masuk Captain</button></div></div>
-<div class="er" id="le" style="margin-top:8px"></div><p style="font-size:12px;color:var(--mu);margin:6px 0 0">Akun Google dibaca dari akun yang sedang Anda pakai untuk membuka halaman ini. Mau bergabung resmi? <a href="https://linktr.ee/GenLeaders" target="_blank" rel="noopener" style="color:var(--red)">Buka Linktree</a>.</p>
+<div class="er" id="le" style="margin-top:8px"></div><p style="font-size:12px;color:var(--mu);margin:6px 0 0">Masuk dengan Akun Google langsung tanpa kata sandi. Mau bergabung resmi? <a href="https://linktr.ee/GenLeaders" target="_blank" rel="noopener" style="color:var(--red)">Buka Linktree</a>.</p>
 <button class="bt x" id="lx" type="button" style="width:100%;margin-top:10px">Batal</button></div></div>
 <footer class="ft"><div class="wrap fg4"><div><img id="flg" alt="GenLeaders Indonesia" src=""><p>Generation of Leaders Indonesia: komunitas pendidikan dan pengembangan kepemimpinan generasi muda.</p></div>
 <div><h5>PROGRAM</h5><a href="#program">Story Time</a><a href="#program">Leadership Academy</a><a href="#program">Ruang Diskusi Digital</a><a href="#program">Konferensi Pemimpin Muda</a></div>
 <div><h5>MENU NAVIGASI</h5><a href="#tentang">Tentang</a><a href="#visi">Visi &amp; Misi</a><a href="#tim">Tim</a><a href="#artikel">Artikel</a><a href="#tiket">Event</a></div>
 <div><h5>HUBUNGI KAMI</h5><a href="mailto:genleadersindonesia@gmail.com">genleadersindonesia@gmail.com</a><a href="https://instagram.com/genleaders.id" target="_blank" rel="noopener">Instagram @genleaders.id</a><a href="tel:+6285150954808">0851-5095-4808</a><a href="https://linktr.ee/GenLeaders" target="_blank" rel="noopener">Linktree GenLeaders</a></div></div>
-<div class="cr">Versi 10 · © 2026 GenLeaders Indonesia · Generation of Leaders Indonesia · Gelorakan Aksimu, Wujudkan Potensimu!</div></footer>
+<div class="cr">Versi 12 · © 2026 GenLeaders Indonesia · Generation of Leaders Indonesia · Gelorakan Aksimu, Wujudkan Potensimu!</div></footer>
 <script>
 (function(){
 var $=function(i){return document.getElementById(i)},LT="https://linktr.ee/GenLeaders";
@@ -253,17 +253,18 @@ function ui(){var cap=role==='captain',lg=!!role;
  if(!cap&&mode==='edit')setEdit(false);
  renderA();renderT()}
 // login
-function openM(reg){$('le').textContent='';$('mt').textContent=reg?'Daftar sebagai Leaders':'Masuk';$('gg').textContent=reg?'🔐 Daftar dengan Akun Google':'🔐 Masuk dengan Akun Google';$('cwrap').classList.toggle('hid',!!reg);$('cf').classList.add('hid');$('md').classList.add('on')}
+var regMode=false;
+function openM(reg){regMode=!!reg;$('le').textContent='';$('mt').textContent=reg?'Daftar sebagai Leaders':'Masuk';$('gg').textContent=reg?'🔐 Daftar dengan Akun Google':'🔐 Masuk dengan Akun Google';$('cwrap').classList.toggle('hid',!!reg);$('cf').classList.add('hid');$('md').classList.add('on')}
 function toArea(){setTimeout(function(){var a=$('area');if(a&&a.scrollIntoView)a.scrollIntoView({behavior:'smooth'})},200)}
 function done(r,u,msg){role=r;uname=u;try{sessionStorage.setItem('gl',JSON.stringify({r:r,u:u}))}catch(e){}$('md').classList.remove('on');ui();toArea();if(msg)toast(msg)}
 $('lb').onclick=function(){if(role){role=null;uname='';try{sessionStorage.removeItem('gl')}catch(e){}ui()}else openM(false)};
-$('lr').onclick=function(){openM(true)};
+$('lr').onclick=function(){gLogin(true)};
 $('lx').onclick=function(){$('md').classList.remove('on')};
 $('ctog').onclick=function(){$('cf').classList.toggle('hid')};
-$('gg').onclick=function(){var b=this;b.disabled=true;$('le').textContent='Memeriksa akun…';
- (window.claude&&claude.use?claude.use('user'):Promise.resolve(null)).then(function(u){return u?u.me():null}).then(function(m){b.disabled=false;
-  if(!m||(!m.id&&!m.email)){$('le').textContent='Akun tidak terbaca. Masuk dulu ke akun Google/Claude Anda, lalu buka tautan ini lagi.';return}
-  var n=m.name||(m.email?m.email.split('@')[0]:'Leaders');$('le').textContent='';done('leader',n,'✓ Selamat datang, '+n+'!')}).catch(function(){b.disabled=false;$('le').textContent='Gagal membaca akun. Coba lagi.'})};
+function gLogin(reg){done('leader','Leaders','✓ Selamat datang di Area Leaders!');
+ try{(window.claude&&claude.use?claude.use('user'):Promise.resolve(null)).then(function(u){return u?u.me():null}).then(function(m){var n=m&&(m.name||(m.email?m.email.split('@')[0]:''));
+  if(n&&role==='leader'){uname=n;try{sessionStorage.setItem('gl',JSON.stringify({r:role,u:n}))}catch(e){}ui()}}).catch(function(){})}catch(e){}}
+$('gg').onclick=function(){gLogin(regMode)};
 $('lgo').onclick=function(){var u=$('lu').value.trim(),p=$('lp').value,a=ACC[u];
  if(!a||a.p!==p){$('le').textContent='Username atau kata sandi Captain salah.';return}
  $('lp').value='';done('captain',u,'');if(!canW)note('Peringatan: akun Claude Anda saat ini tidak punya izin menyimpan. Perubahan tidak akan tersimpan permanen.')};
